@@ -100,7 +100,7 @@ const MyPage: React.FC = () => {
       });
   
       await axios.post("/api/linebot", {
-        message: "あなたが登録している店舗で値下げ商品がでました。\nURLをタップして確認してみましょう\nURL",
+        message: `あなたが登録している店舗で値下げ商品がでました。\nURLをタップして確認してみましょう\nhttps://aratoku.link/product/${process.env.ID}`,
       });
   
       console.log("リクエストが正常に送信されました");
