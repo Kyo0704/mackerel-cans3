@@ -6,21 +6,22 @@ import axios from 'axios';
 
 
 interface Discount {
-  pid: string;
-  sid: string;
-  stid: string;
-  dprice: number;
-  number: number;
-  product: Product;
+  pid:         String  
+  sid :        String  
+  dprice:      number
+  quantity:    number
+  cid:         String  
+  stid:        String 
+  product: Product
 }
 
 interface Product {
   pid: string;
   pname: string;
-  expiry_date: string;
   price: number;
   image: string;
   cid: string;
+  expiry_date: string;
 }
 
 interface Classification_state{

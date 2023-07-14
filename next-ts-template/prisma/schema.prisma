@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   uid    String @id @db.VarChar(255)
-  uname   String? @db.VarChar(255) 
+  uname   String @db.VarChar(255) 
   registeredStore RegisteredStore[]
 }
 
@@ -26,12 +26,12 @@ model Classification {
 model Product {
   pid         String @id @db.VarChar(255) @default(cuid())
   pname       String @db.VarChar(255)
-  expiry_date DateTime?
-  price       Int?
+  price       Int
   image       String @db.VarChar(255)
   cid         String @db.VarChar(255)
   production_area String? @db.VarChar(255)
   volume      String?  @db.VarChar(255) 
+  expiry_date DateTime?
   discounts   Discount[]
   Classification Classification @relation(fields: [cid], references: [cid])
 }
@@ -60,11 +60,12 @@ model Classification_state {
 }
 
 model Discount {
-  pid         String
-  sid         String
-  stid        String
+  pid         String  @db.VarChar(255)
+  sid         String  @db.VarChar(255)
   dprice      Int 
-  number      Int
+  quantity    Int
+  cid         String  @db.VarChar(255)
+  stid        String  @db.VarChar(255)
   product     Product @relation(fields: [pid], references: [pid])
   store       Store   @relation(fields: [sid], references: [sid])
   state       State   @relation(fields: [stid], references: [stid])
