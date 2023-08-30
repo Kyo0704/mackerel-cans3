@@ -8,13 +8,16 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'GET') {
-    const discount_product = await prisma.registeredStore.findMany({
+    const discount_product = await prisma.discount.findMany({
+      include: {
+        product: true,
+        state: true,
+      },
       where: {
         sid: process.env.ID!,
       },
     });
     res.status(200).json(discount_product);
-    console.log(discount_product)
   } else {
     res.status(405).json({ message: 'Method not allowed' });
   }

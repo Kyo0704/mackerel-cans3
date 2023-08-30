@@ -13,7 +13,7 @@ datasource db {
 model User {
   uid    String @id @db.VarChar(255)
   uname   String @db.VarChar(255) 
-  registeredStore RegisteredStore[]
+  registered_Store Registered_Stores[]
 }
 
 model Classification {
@@ -40,7 +40,7 @@ model Store {
   sid         String @id @db.VarChar(255)
   sname       String @db.VarChar(255)
   discounts   Discount[]
-  registeredStore RegisteredStore[]
+  registered_Store Registered_Stores[]
   employees Employee[]
 }
 
@@ -64,7 +64,6 @@ model Discount {
   sid         String  @db.VarChar(255)
   dprice      Int 
   quantity    Int
-  cid         String  @db.VarChar(255)
   stid        String  @db.VarChar(255)
   product     Product @relation(fields: [pid], references: [pid])
   store       Store   @relation(fields: [sid], references: [sid])
@@ -72,7 +71,7 @@ model Discount {
   @@id([pid, sid])
 }
 
-model RegisteredStore {
+model Registered_Stores {
   uid    String @db.VarChar(255)
   sid    String @db.VarChar(255)
   user   User   @relation(fields: [uid], references: [uid])

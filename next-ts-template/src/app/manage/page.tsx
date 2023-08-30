@@ -1,18 +1,17 @@
 "use client"
 import "../globals.css"
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
-
-
 
 interface Discount {
   pid:         String  
   sid :        String  
   dprice:      number
   quantity:    number
-  cid:         String  
   stid:        String 
   product: Product
+  state: State;
 }
 
 interface Product {
@@ -41,48 +40,72 @@ interface State{
   stname: String;
 }
 
+
 const MyPage: React.FC = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState<string[]>([]);
   const [discounts, setDiscount] = useState<Discount[]>([]);
+  const [classifications, setClassifications] = useState<Classification_state[]>([]); 
 
   useEffect(() => {
     fetch('/api/discount_product')
       .then((response) => response.json())
-      .then((data) => setDiscount(data));
+      .then((data) => {
+        setDiscount(data);
+      })
+      .catch((error) => {
+        // エラーハンドリング
+        console.error('Error fetching data:', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch('api/state_Classification')
+      .then((response) => response.json())
+      .then((data) => {
+        setClassifications(data);
+      })
+      .catch((error) => {
+        // エラーハンドリング
+        console.error('Error fetching data:', error);
+      });
   }, []);
 
   const getstname = (index: number) => {
-    const [classifications, setClassification] = useState<Classification_state[]>([]);
-    const cid = discounts[index].product.cid
-    useEffect(() => {
-      fetch(`/api/state_classification${cid}`)
-        .then((response) => response.json())
-        .then((data) => setClassification(data));
-    }, []);
+    const cid = discounts[index].product.cid;
 
-    return classifications.map((classification) => (
-    <option value={String(classification.state.stid)}>{classification.state.stname}</option>
+    return classifications
+      .filter((classification) => classification.cid === cid)
+      .map((classification) => (
+        <option key={classification.stid.toString()} value={String(classification.stid)}>
+          {classification.state.stname}
+        </option>
     ));
   };
-
+  
   const renderRows = () => {
     return discounts.map((discount, index) => (
       <React.Fragment key={index}>
         <tr>
-          <td className="border border-gray-300 p-2">{discount.product.pname}</td>
+          <td className="border border-gray-300 p-2 text-center">{discount.product.pname}</td>
           <td className="border border-gray-300 p-2">
-            <img src={`https://sabakan-backet.s3.ap-southeast-2.amazonaws.com/test/${discount.product.image}`}  />
+            <img src={`https://sabakan-backet.s3.ap-southeast-2.amazonaws.com/test/${discount.product.image}`} alt="写真" title="商品写真" 
+            width={200} height={150} />
           </td>
-          <td className="border border-gray-300 p-2">
-            <select
+          <td className="border border-gray-300 p-2 text-center">
+            <select aria-label="状態選択"
               className="border border-gray-300 rounded-md p-2"
               value={formData[index] || '' as string}
               onChange={(e) => handleSelectChange(e, index)}
             >
+               <option value={String(discount.stid)} hidden>{discount.state.stname}</option>
               {getstname(index)}
             </select>
           </td>
+          <td className="border border-gray-300 p-2 text-center">{discount.dprice}円</td>
+          <td className="border border-gray-300 p-2 text-center">{discount.quantity}</td>
         </tr>
+
       </React.Fragment>
     ));
   };
@@ -93,45 +116,44 @@ const MyPage: React.FC = () => {
     setFormData(newFormData);
   };
 
-  const handleSubmit = async () => {
-    try {
-      await axios.post("/api/state_update", {
-        formData: formData,
-        discounts: discounts,
-      });
-  
-      await axios.post("/api/linebot", {
-        message: `あなたが登録している店舗で値下げ商品がでました。\nURLをタップして確認してみましょう\nhttps://aratoku.link/product/`,
-      });
-  
-      console.log("リクエストが正常に送信されました");
-    } catch (error) {
-      console.error("リクエストの送信中にエラーが発生しました", error);
-    }
-  };
+  const handleSecondButtonClick = () => {
+  try {
+        axios.post("api/state_update", {
+          formData: formData,
+          discounts: discounts,
+        });
+      } catch (error) {
+        console.error("リクエストの送信中にエラーが発生しました", error);
+      }
+      router.push('/result');
+  }
+
 
   return (
-    <div>
-      <div className="w-screen h-screen flex flex-col  items-center">
-      <h1  className="mt-4 mb-4 text-4xl">値下げ商品情報送信</h1>
-        <table className="w-full border-collapse table-auto">
+    <div className="w-screen h-screen flex flex-col  items-center">
+      <h1  className="mt-4 mb-4 font-semibold text-4xl">値下げ商品情報送信</h1>
+      <h2  className="mt-4 mb-4 font-semibold text-2xl">商品の状態を選択してください</h2>
+
+        <table className="w-full border-collapse table-auto max-w-[80%]" >
           <thead>
             <tr>
-              <th className="border border-gray-300 p-2">商品名</th>
-              <th className="border border-gray-300 p-2">商品画像</th>
-              <th className="border border-gray-300 p-2">状態</th>
+              <th className="border border-gray-300 p-2 w-1/5">商品名</th>
+              <th className="border border-gray-300 p-2 w-1/5">商品画像</th>
+              <th className="border border-gray-300 p-2 w-1/5">状態</th>
+              <th className="border border-gray-300 p-2 w-1/5">値段</th>
+              <th className="border border-gray-300 p-2 w-1/5">数量</th>
             </tr>
           </thead>
           <tbody>{renderRows()}</tbody>
         </table>
         <button
-          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={handleSubmit}
+          className="mt-8 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-16 rounded"
+          onClick={handleSecondButtonClick}
         >
-          送信
+          更新
         </button>
       </div>
-    </div>
+      
   );
 };
 
