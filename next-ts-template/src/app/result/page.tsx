@@ -98,7 +98,7 @@ const MyPage: React.FC = () => {
             id: user.uid,
             }),
             axios.post("api/linebot", {
-                message: `https://aratoku.link/product/`,
+                message: `https://alatoku.link/product/`,
                 id: user.uid,
             })
         ));
