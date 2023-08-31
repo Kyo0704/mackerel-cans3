@@ -94,8 +94,12 @@ const MyPage: React.FC = () => {
         try {
         users.map((user) => (
             axios.post("api/linebot", {
-            message: `${user.store.sname}で値下げ商品がでました。\nURLをタップして確認してみましょう\nhttps://aratoku.link/product/`,
+            message: `${user.store.sname}で値下げ商品がでました。\nURLをタップして確認してみましょう。`,
             id: user.uid,
+            }),
+            axios.post("api/linebot", {
+                message: `https://aratoku.link/product/`,
+                id: user.uid,
             })
         ));
         console.log("リクエストが正常に送信されました");
