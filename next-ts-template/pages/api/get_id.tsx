@@ -8,7 +8,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'GET') {
-    const discount_product = await prisma.registered_Stores.findMany({
+    const discount_product = await prisma.registered_stores.findMany({
       include: {
         store: true,
       },
