@@ -3,6 +3,9 @@ import "../globals.css"
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { GetServerSideProps } from 'next';
+import { parseCookies, setCookie, destroyCookie } from 'nookies'
+
 
 interface Discount {
   pid:         String  

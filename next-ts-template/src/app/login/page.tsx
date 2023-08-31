@@ -3,13 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import "../globals.css";
 
+
 interface Employee {
     eid:         String  
     ename:      String  
     sid:         String
     jid:         String
     pass:        String 
-  }
+}
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');

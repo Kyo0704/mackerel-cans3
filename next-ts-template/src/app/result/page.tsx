@@ -31,11 +31,16 @@ interface State{
 interface RegisteredStore{
   uid:    String;
   sid:   String;
+  store: Store;
+}
+
+interface Store{
+    sid: String;
+    sname: String;
 }
 
 const MyPage: React.FC = () => {
     const router = useRouter();
-    const [formData, setFormData] = useState<string[]>([]);
     const [discounts, setDiscount] = useState<Discount[]>([]);
     const [users, setUser] = useState<RegisteredStore[]>([]);
 
@@ -89,7 +94,7 @@ const MyPage: React.FC = () => {
         try {
         users.map((user) => (
             axios.post("api/linebot", {
-            message: `あなたが登録している店舗で値下げ商品がでました。\nURLをタップして確認してみましょう\nhttps://aratoku.link/product/`,
+            message: `${user.store.sname}で値下げ商品がでました。\nURLをタップして確認してみましょう\nhttps://aratoku.link/product/`,
             id: user.uid,
             })
         ));
