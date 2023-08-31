@@ -100,7 +100,7 @@ const MyPage: React.FC = () => {
               value={formData[index] || '' as string}
               onChange={(e) => handleSelectChange(e, index)}
             >
-               <option value={String(discount.stid)} hidden>{discount.state.stname}</option>
+               <option value={String(discount.stid)} hidden selected>{discount.state.stname}</option>
               {getstname(index)}
             </select>
           </td>
