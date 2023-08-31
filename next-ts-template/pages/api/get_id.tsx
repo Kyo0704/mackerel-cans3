@@ -9,6 +9,9 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     const discount_product = await prisma.registered_Stores.findMany({
+      include: {
+        store: true,
+      },
       where: {
         sid: process.env.ID!,
       },
